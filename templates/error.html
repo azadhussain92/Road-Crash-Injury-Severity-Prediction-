@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card" style="text-align: center; margin-top: 50px;">
+            <h1 style="color: #f44336;">Something went wrong!</h1>
+            <p style="background: rgba(244, 67, 54, 0.1); padding: 20px; border-radius: 10px; color: #d32f2f;">
+                {{ error_message }}
+            </p>
+            <a href="/"><button class="btn-submit" style="margin-top: 20px;">Back to Home</button></a>
+        </div>
+    </div>
+</body>
+</html>

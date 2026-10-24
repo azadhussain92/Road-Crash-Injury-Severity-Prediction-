@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .result-bar-row {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .section-title {
+            text-align: center;
+            font-weight: 600;
+            margin: 25px 0 15px 0;
+            font-size: 16px;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 2px;
+            background: rgb(33, 71, 131);
+            margin: 5px auto 0;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-title">Crash Prediction System</div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/history">History</a>
+                <a href="#" class="active">Results</a>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h1>Prediction Results</h1>
+            <p class="description">Analysis of the crash incident severity</p>
+            <!-- Top Badge -->
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span class="severity-badge 
+                    {% if severity == 'Fatal Injury' %} severity-fatal 
+                    {% elif severity == 'Serious Injury' %} severity-serious 
+                    {% else %} severity-minor {% endif %}"
+                    style="background: #ffeb3b; padding: 5px 15px; border-radius: 15px; font-size: 14px; font-weight: bold; color: #0b2e59;">
+                    {{ severity }}
+                </span>
+            </div>
+
+            <div class="result-bar-row">
+                <strong>Injury Severity:</strong> 
+                <span style="color: #ff4d4d; font-weight: bold;">{{ severity }}</span>
+            </div>
+            <div class="result-bar-row">
+                <strong>Suggested Action:</strong> {{ suggestion }}
+            </div>
+            <!-- Risk Assessment -->
+            <div style="background: rgba(255, 255, 255, 0.4); padding: 20px; border-radius: 20px; margin-bottom: 25px;">
+                <div style="text-align:center; font-weight:600; color:#0b2e59;">Risk Assessment</div>
+                <div style="height: 12px; background: linear-gradient(to right, #4caf50, #ffeb3b, #ff9800, #f44336); border-radius: 10px; margin: 15px 0 5px 0; position: relative;">
+                    <div style="position: absolute; top: -5px; width: 4px; height: 22px; background: #0b2e59; border-radius: 2px; box-shadow: 0 0 5px rgba(0,0,0,0.3); left: {% if severity == 'Fatal Injury' %} 90% {% elif severity == 'Serious Injury' %} 65% {% else %} 15% {% endif %};">
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 500; color: #123e75;">
+                    <span>Low</span>
+                    <span>Medium</span>
+                    <span>High</span>
+                </div>
+            </div>
+            <!-- Risk Analysis (Chart Simulation) -->
+            <h3 class="section-title">Risk Analysis</h3>
+            <div style="background: rgba(255, 255, 255, 0.4); padding: 20px; border-radius: 15px; margin-bottom: 25px; position: relative;">
+                <div style="text-align: center; font-size: 14px; font-weight: 600; color: #123e75; margin-bottom: 20px;">
+                    Injury Severity Probability Assessment
+                </div>
+                <div style="display: flex; height: 200px; padding-left: 50px; position: relative;">
+                    <!-- Y-Axis Labels & Grid Lines -->
+                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 40px; display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: #666; text-align: right; padding-right: 10px;">
+                        <span>100%</span>
+                        <span>90%</span>
+                        <span>80%</span>
+                        <span>70%</span>
+                        <span>60%</span>
+                        <span>50%</span>
+                        <span>40%</span>
+                        <span>30%</span>
+                        <span>20%</span>
+                        <span>10%</span>
+                        <span>0%</span>
+                    </div>
+                    <!-- Horizontal Grid Lines (background) -->
+                    <div style="position: absolute; left: 50px; right: 20px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: space-between; z-index: 1;">
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.05); width: 100%;"></div>
+                        <div style="border-top: 1px solid rgba(0,0,0,0.2); width: 100%;"></div> <!-- 0% line -->
+                    </div>
+                    <!-- Chart Bars Container -->
+                    <div style="display: flex; justify-content: space-around; align-items: flex-end; width: 100%; height: 100%; position: relative; z-index: 2; padding-bottom: 1px;">
+                        <!-- Bar 1: Minor -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px;">
+                            <div style="font-weight: 600; font-size: 11px; margin-bottom: 5px; color: #333;">10%</div>
+                            <div style="width: 25px; border-radius: 5px 5px 0 0; background: #4caf50; height: 10%;">
+                            </div>
+                            <div style="font-size: 10px; margin-top: 8px; color: #666; white-space: nowrap; position: absolute; bottom: -20px;">
+                                No Injury or Minor</div>
+                        </div>
+                        <!-- Bar 2: Serious -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px;">
+                            <div style="font-weight: 600; font-size: 11px; margin-bottom: 5px; color: #333;">{% if
+                                severity == 'Serious Injury' %}70%{% else %}15%{% endif %}</div>
+                            <div style="width: 25px; border-radius: 5px 5px 0 0; background: #ffaa00; height: {% if severity == 'Serious Injury' %}70%{% else %}15%{% endif %};">
+                            </div>
+                            <div style="font-size: 10px; margin-top: 8px; color: #666; white-space: nowrap; position: absolute; bottom: -20px;">
+                                Serious Injury</div>
+                        </div>
+                        <!-- Bar 3: Fatal -->
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 60px;">
+                            <div style="font-weight: 600; font-size: 11px; margin-bottom: 5px; color: #333;">{% if
+                                severity == 'Fatal Injury' %}80%{% else %}10%{% endif %}</div>
+                            <div style="width: 25px; border-radius: 5px 5px 0 0; background: #f44336; height: {% if severity == 'Fatal Injury' %}80%{% else %}10%{% endif %};">
+                            </div>
+                            <div style="font-size: 10px; margin-top: 8px; color: #666; white-space: nowrap; position: absolute; bottom: -20px;">
+                                Fatal Injury</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Extra padding at bottom for labels -->
+                <div style="height: 30px;"></div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.4); padding: 15px; border-radius: 20px; text-align: center; margin-bottom: 25px; font-weight: 500;">
+                Safety Recommendations
+            </div>
+            <!-- Crash Details Summary -->
+            <h3 class="section-title">Crash Details</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 20px;">
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Time of
+                        Crash:</strong> {{ form_data.time_of_crash }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Day of
+                        Week:</strong> {{ form_data.day_of_week | capitalize }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Weather:</strong>
+                    {{ form_data.weather_condition | capitalize }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Light
+                        Condition:</strong> {{ form_data.light_condition | replace('_', ' ') | title }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Speed
+                        Limit:</strong> {{ form_data.speed_limit }} km/h
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Crash
+                        Type:</strong> {{ form_data.crash_type | capitalize }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Road
+                        Type:</strong> {{ form_data.road_type | capitalize }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Road
+                        Surface:</strong> {{ form_data.road_surface_condition | default('Dry') | capitalize }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Driver
+                        Age:</strong> {{ form_data.driver_age }}
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.6); padding: 15px; border-radius: 15px; text-align: center; font-size: 13px;">
+                    <strong style="display: block; font-size: 12px; color: #123e75; margin-bottom: 5px;">Seatbelt
+                        Used:</strong> {% if form_data.seatbelt_used == 'on' %}Yes{% else %}No{% endif %}
+                </div>
+            </div>
+            <!-- Bottom Buttons Row -->
+            <div style="margin-top: 30px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="/" style="text-decoration: none;">
+                    <button type="button" style="background: rgba(255, 255, 255, 0.4); color: #0b2e59; padding: 10px 20px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer;">
+                        Back to Form
+                    </button>
+                </a>
+
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" style="background-color: #1A6DD9; color: white; padding: 10px 20px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(26, 109, 217, 0.3);">
+                        Print Results
+                    </button>
+                    <button type="button" style="background: rgba(255, 255, 255, 0.4); color: #0b2e59; padding: 10px 20px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer;">
+                        Export PDF
+                    </button>
+                    <button type="button" style="background: rgba(255, 255, 255, 0.4); color: #0b2e59; padding: 10px 20px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer;">
+                        Share Link
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

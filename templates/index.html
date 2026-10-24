@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Road Crash Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Leaflet CSS for the Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-title">Road Crash Prediction System</div>
+            <div class="nav-links">
+                <a href="/" class="active">Home</a>
+                <a href="/history">History</a>
+            </div>
+        </div>
+        <!-- Main Form Card -->
+        <div class="glass-card">
+            <h1>Road Crash Injury Severity Prediction</h1>
+            <p class="description">Enter crash details to predict potential injury severity</p>
+            <form id="predictionForm" action="/predict" method="post">
+                <!-- ROW 1 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="date_of_crash">Date of Crash</label>
+                        <input type="date" id="date_of_crash" name="date_of_crash" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="time_of_crash">Time of Crash</label>
+                        <input type="time" id="time_of_crash" name="time_of_crash" required>
+                    </div>
+                </div>
+                <!-- ROW 2 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="day_of_week">Day of Week</label>
+                        <select id="day_of_week" name="day_of_week" required>
+                            <option value="monday">Monday</option>
+                            <option value="tuesday">Tuesday</option>
+                            <option value="wednesday">Wednesday</option>
+                            <option value="thursday">Thursday</option>
+                            <option value="friday">Friday</option>
+                            <option value="saturday">Saturday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="weather_condition">Weather Condition</label>
+                        <div style="display:flex; gap:10px;">
+                            <select id="weather_condition" name="weather_condition" style="flex:1;" required>
+                                <option value="clear">Clear</option>
+                                <option value="cloudy">Cloudy</option>
+                                <option value="rain">Rain</option>
+                                <option value="snow">Snow</option>
+                                <option value="fog">Fog</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- ROW 3 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="light_condition">Light Condition</label>
+                        <select id="light_condition" name="light_condition" required>
+                            <option value="light">Daylight</option>
+                            <option value="dark_unlighted">Dark (No Lighting)</option>
+                            <option value="dark_lighted">Dark (Lighted)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="button" class="btn-action btn-clear" style="width:100%; border-radius:15px; padding:8px;">Auto Detect Light Condition</button>
+                    </div>
+                </div>
+                <!-- ROW 4 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="road_surface_condition">Road Surface Condition</label>
+                        <select id="road_surface_condition" name="road_surface_condition">
+                            <option value="dry">Dry</option>
+                            <option value="wet">Wet</option>
+                            <option value="snow">Snow/Ice</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="speed_limit">Speed Limit (km/h)</label>
+                        <input type="number" id="speed_limit" name="speed_limit" value="100">
+                    </div>
+                </div>
+                <!-- ROW 5 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="crash_type">Crash Type</label>
+                        <select id="crash_type" name="crash_type">
+                            <option value="sideswipe">Sideswipe</option>
+                            <option value="rear_end">Rear-end</option>
+                            <option value="head_on">Head-on</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="road_type">Road Type</label>
+                        <select id="road_type" name="road_type">
+                            <option value="residential">Residential</option>
+                            <option value="highway">Highway</option>
+                            <option value="rural">Rural</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- ROW 6 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="road_geometry">Road Geometry</label>
+                        <select id="road_geometry" name="road_geometry">
+                            <option value="straight">Straight</option>
+                            <option value="curve">Curve</option>
+                            <option value="intersection">Intersection</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="number_of_lanes">Number of Lanes</label>
+                        <input type="number" id="number_of_lanes" name="number_of_lanes" value="2">
+                    </div>
+                </div>
+
+                <!-- ROW 7 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="traffic_control">Traffic Control</label>
+                        <select id="traffic_control" name="traffic_control">
+                            <option value="stop_sign">Stop Sign</option>
+                            <option value="traffic_light">Traffic Light</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Area Type</label>
+                        <div class="radio-group">
+                            <label class="radio-label"><input type="radio" name="area_type" value="urban" checked>
+                                Urban</label>
+                            <label class="radio-label"><input type="radio" name="area_type" value="rural"> Rural</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- ROW 8 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="vehicle_type">Vehicle Type</label>
+                        <select id="vehicle_type" name="vehicle_type">
+                            <option value="sedan">Sedan</option>
+                            <option value="suv">SUV</option>
+                            <option value="motorcycle">Motorcycle</option>
+                            <option value="truck">Truck</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vehicle Number</label>
+                        <input type="text" name="vehicle_number" placeholder="ABC-123">
+                    </div>
+                </div>
+                <!-- ROW 9 -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Driver Name</label>
+                        <input type="text" name="driver_name" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label>Driver Age</label>
+                        <input type="number" name="driver_age" value="30">
+                    </div>
+                </div>
+                <!-- ROW 10 & TOGGLES -->
+                <div class="form-row" style="align-items: center;">
+                    <div class="form-group" style="flex: 0.5;">
+                        <label>Driver Gender</label>
+                        <select name="driver_gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="toggles-row">
+                    <div class="toggle-container">
+                        <div class="toggle-switch">
+                            <input type="checkbox" name="alcohol_involved" id="alcohol">
+                        </div>
+                        <label for="alcohol" style="margin:0; font-weight:500;">Alcohol Involved</label>
+                    </div>
+                    <div class="toggle-container">
+                        <div class="toggle-switch">
+                            <input type="checkbox" name="seatbelt_used" id="seatbelt" checked>
+                        </div>
+                        <label for="seatbelt" style="margin:0; font-weight:500;">Seatbelt Used</label>
+                    </div>
+                </div>
+                <!-- UNIFIED LIVE MAP LOCATION BOX (Split Layout) -->
+                <div class="location-box">
+                    <label>Location</label>
+                    <input type="text" name="location" id="location_text" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;" placeholder="Rivière-Koksoak, Quebec, Canada">
+                    <div style="display: flex; gap: 20px;">
+                        <!-- Left Side: Map -->
+                        <div style="flex: 2;">
+                            <div id="map" style="height: 250px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.5); z-index: 1;">
+                            </div>
+                        </div>
+                        <!-- Right Side: Coordinates & Buttons -->
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                            <div>
+                                <label style="font-size: 11px; margin-bottom: 2px;">Latitude</label>
+                                <input type="text" id="latitude" name="latitude" style="width: 100%; box-sizing: border-box;" readonly>
+                            </div>
+                            <div>
+                                <label style="font-size: 11px; margin-bottom: 2px;">Longitude</label>
+                                <input type="text" id="longitude" name="longitude" style="width: 100%; box-sizing: border-box;" readonly>
+                            </div>
+                            <button type="button" id="copyCoordBtn" class="btn-action btn-clear" style="width: 100%; padding: 10px; font-size: 12px; margin-top: 5px; border-radius: 15px;">
+                                Copy Coordinates
+                            </button>
+                            <button type="button" id="getLocationBtn" class="btn-action" style="width: 100%; padding: 10px; font-size: 12px; background-color: #0b2e59; border-radius: 15px;">
+                                📍 Get Current Location
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="form-actions">
+                    <button type="reset" class="btn-action btn-clear">Clear Inputs</button>
+                    <button type="submit" class="btn-submit">Predict</button>
+                </div>
+                <!-- View Crash History Button -->
+                <div style="text-align: center; margin-top: 25px;">
+                    <a href="/history" style="text-decoration: none;">
+                        <button type="button" class="btn-action" style="background-color: #3b82f6; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); padding: 12px 40px;">
+                            🕒 View Crash History
+                        </button>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Map Initialization Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const latitudeInput = document.getElementById('latitude');
+            const longitudeInput = document.getElementById('longitude');
+            const locationTextInput = document.getElementById('location_text'); // Address input
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            const copyCoordBtn = document.getElementById('copyCoordBtn');
+            // Default location (Bengaluru)
+            let defaultLat = 12.9716;
+            let defaultLng = 77.5946;
+            let map = L.map('map').setView([defaultLat, defaultLng], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+            let marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+            // Function to fetch actual address using coordinates
+            function getAddress(lat, lng) {
+                if (locationTextInput) {
+                    locationTextInput.value = "Fetching address...";
+                    // OpenStreetMap Reverse Geocoding API
+                    fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data && data.display_name) {
+                                locationTextInput.value = data.display_name;
+                            } else {
+                                locationTextInput.value = "Address not found";
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Geocoding error:", err);
+                            locationTextInput.value = "Error fetching address";
+                        });
+                }
+            }
+
+            function updateInputs(lat, lng) {
+                latitudeInput.value = lat.toFixed(6);
+                longitudeInput.value = lng.toFixed(6);
+                // Call getAddress whenever coordinates change
+                getAddress(lat, lng);
+            }
+            // When dragging the pin on the map
+            marker.on('dragend', function (e) {
+                let position = marker.getLatLng();
+                updateInputs(position.lat, position.lng);
+            });
+            // When clicking on the map
+            map.on('click', function (e) {
+                marker.setLatLng(e.latlng);
+                updateInputs(e.latlng.lat, e.latlng.lng);
+            });
+            // When clicking the 'Get Current Location' button
+            if (getLocationBtn) {
+                getLocationBtn.addEventListener('click', function () {
+                    if (navigator.geolocation) {
+                        getLocationBtn.innerHTML = "⏳ Locating...";
+                        navigator.geolocation.getCurrentPosition(function (position) {
+                            let lat = position.coords.latitude;
+                            let lng = position.coords.longitude;
+                            map.setView([lat, lng], 15);
+                            marker.setLatLng([lat, lng]);
+                            updateInputs(lat, lng);
+                            getLocationBtn.innerHTML = "📍 Get Current Location";
+                        }, function (error) {
+                            alert("Location access denied or unavailable.");
+                            getLocationBtn.innerHTML = "📍 Get Current Location";
+                        });
+                    } else {
+                        alert("Geolocation is not supported.");
+                    }
+                });
+            }
+            // When clicking the 'Copy Coordinates' button
+            if (copyCoordBtn) {
+                copyCoordBtn.addEventListener('click', function () {
+                    if (latitudeInput.value && longitudeInput.value) {
+                        const coords = latitudeInput.value + ', ' + longitudeInput.value;
+                        navigator.clipboard.writeText(coords).then(() => {
+                            let originalText = copyCoordBtn.innerText;
+                            copyCoordBtn.innerText = 'Copied!';
+                            setTimeout(() => { copyCoordBtn.innerText = originalText; }, 2000);
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

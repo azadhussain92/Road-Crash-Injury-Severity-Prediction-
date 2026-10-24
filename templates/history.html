@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crash History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="nav-container">
+            <div class="nav-title">Crash Prediction System</div>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/history" class="active">History</a>
+            </div>
+        </div>
+        <div class="glass-card">
+            <h1>Prediction History</h1>
+            {% if records %}
+                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr style="background: rgba(255,255,255,0.5); text-align: left;">
+                        <th style="padding: 10px; border-bottom: 2px solid #1A6DD9;">Date</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #1A6DD9;">Weather</th>
+                        <th style="padding: 10px; border-bottom: 2px solid #1A6DD9;">Predicted Severity</th>
+                    </tr>
+                    {% for record in records %}
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.3);">
+                        <td style="padding: 10px;">{{ record.date_of_crash }}</td>
+                        <td style="padding: 10px;">{{ record.weather_condition | capitalize }}</td>
+                        <td style="padding: 10px;"><strong>{{ record.severity_prediction }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% else %}
+                <p style="text-align: center; margin-top: 20px;">No crash records found in the database yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
