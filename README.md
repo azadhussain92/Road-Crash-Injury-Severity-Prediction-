@@ -31,13 +31,7 @@ The system categorizes predicted injury severity into three classes: **Minor, Se
 | Leaflet.js | Interactive maps |
 | OpenStreetMap Nominatim API | Reverse geocoding |
 
-## 🏗️ System Architecture Diagram
-
-The system follows a workflow that connects the user interface, location services, Flask backend, prediction logic, and MySQL database.
-
-![Road Crash Injury Severity Prediction System Architecture](docs/system_architecture.png)
-
-### Architecture Components
+### System Architecture Components
 
 **1. User Input**
 
