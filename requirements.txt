@@ -1,7 +1,5 @@
-@"
 flask
 gunicorn
 numpy
 pandas
 scikit-learn
-"@ | Set-Content -Encoding utf8 requirements.txt
