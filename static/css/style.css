@@ -206,3 +206,85 @@ input:focus, select:focus {
     font-size: 14px;
     cursor: pointer;
 }
+
+/* --- Mobile Responsive Fix --- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px 20px;
+        border-radius: 25px;
+        text-align: center;
+    }
+
+    .nav-links {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .nav-links a {
+        margin-left: 0;
+        padding: 8px 18px;
+    }
+
+    .glass-card {
+        padding: 22px 16px;
+        border-radius: 20px;
+    }
+
+    h1 {
+        font-size: 21px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .form-group {
+        width: 100%;
+    }
+
+    input:not([type="checkbox"]):not([type="radio"]),
+    select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .location-box {
+        padding: 16px;
+    }
+
+    .location-inputs {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+    }
+
+    .form-actions button,
+    .btn-submit,
+    .btn-clear,
+    .btn-fetch-sun,
+    .btn-action {
+        width: 100%;
+    }
+}
