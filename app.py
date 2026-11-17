@@ -1,9 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import requests
-import pandas as pd
-import numpy as np
 from datetime import datetime
-from sklearn.ensemble import RandomForestClassifier
 import mysql.connector
 from mysql.connector import Error
 import random
@@ -118,9 +115,6 @@ def save_crash_data(data, prediction):
         if conn and conn.is_connected():
             conn.close()
 
-def create_model():
-    return RandomForestClassifier(n_estimators=100, random_state=42)
-model = create_model()
 shared_results = {}
 
 @app.route('/')
@@ -138,6 +132,7 @@ def predict():
                 if is_api_call:
                     return jsonify({'error': f'Missing required field: {field}'}), 400
                 return render_template('error.html', error_message=f'Missing required field: {field}')
+        
         severity_options = ['No Injury or Minor Injury', 'Serious Injury', 'Fatal Injury']
         severity = severity_options[random.randint(0, 2)] 
         
