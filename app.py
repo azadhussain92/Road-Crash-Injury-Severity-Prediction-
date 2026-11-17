@@ -8,14 +8,17 @@ import mysql.connector
 from mysql.connector import Error
 import random
 import traceback
+import os
 
 app = Flask(__name__)
 
+# Use environment variables for Render compatibility, falling back to localhost for local testing
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'crash_prediction',
-    'user': 'root',
-    'password': 'root' 
+    'host': os.environ.get('DB_HOST', 'localhost'),
+    'database': os.environ.get('DB_NAME', 'crash_prediction'),
+    'user': os.environ.get('DB_USER', 'root'),
+    'password': os.environ.get('DB_PASSWORD', 'root'),
+    'port': int(os.environ.get('DB_PORT', 3306))
 }
 
 def connect_to_database():
@@ -31,6 +34,7 @@ def save_crash_data(data, prediction):
     conn = connect_to_database()
     if not conn:
         return False
+    cursor = None
     try:
         cursor = conn.cursor()
         cursor.execute('''
@@ -73,14 +77,12 @@ def save_crash_data(data, prediction):
         if data.get('date_of_crash'):
             try:
                 date_of_crash = datetime.strptime(data.get('date_of_crash', ""), '%Y-%m-%d').date()
-            except Exception as e:
+            except Exception:
                 pass
                 
         speed_limit = int(data.get('speed_limit')) if data.get('speed_limit') else 0
         driver_age = int(data.get('driver_age')) if data.get('driver_age') else 0
         
-        # latitude = float(data.get('latitude')) if data.get('latitude') else None
-        # longitude = float(data.get('longitude')) if data.get('longitude') else None
         try:
             latitude = float(data.get('latitude'))
         except (TypeError, ValueError):
@@ -111,8 +113,9 @@ def save_crash_data(data, prediction):
         print(f"Database error: {e}")
         return False
     finally:
-        if conn and conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 def create_model():
@@ -197,8 +200,13 @@ def get_sun_data():
 
 @app.route('/history')
 def history():
+    conn = None
+    cursor = None
     try:
         conn = connect_to_database()
+        if not conn:
+            return render_template('error.html', error_message="Database connection is not available. Please configure your database environment variables on Render.")
+        
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM crash_records ORDER BY created_at DESC")
         records = cursor.fetchall()
@@ -206,8 +214,9 @@ def history():
     except Exception as e:
         return render_template('error.html', error_message=str(e))
     finally:
-        if conn and conn.is_connected():
+        if cursor:
             cursor.close()
+        if conn and conn.is_connected():
             conn.close()
 
 if __name__ == '__main__':
