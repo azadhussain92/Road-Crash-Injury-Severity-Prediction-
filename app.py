@@ -15,7 +15,8 @@ DB_CONFIG = {
     'database': os.environ.get('DB_NAME', 'crash_prediction'),
     'user': os.environ.get('DB_USER', 'root'),
     'password': os.environ.get('DB_PASSWORD', 'root'),
-    'port': int(os.environ.get('DB_PORT', 3306))
+    'port': int(os.environ.get('DB_PORT', 3306)),
+    'connection_timeout': 5  # <-- Is line ko yahan zaroor add karein!
 }
 
 def connect_to_database():
